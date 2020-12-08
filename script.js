@@ -1,49 +1,48 @@
 let number = document.getElementsByClassName("case");
 let action = document.getElementsByClassName("actionButton");
 let result = document.getElementById("result");
+let resultFinal = document.getElementById("resultFinal");
 
 let calcule = [0];
 let pos = 0;
 let calc = 0;
+let formule = ""
 
 function afficher(text){
-    result.innerHTML += text;
+    result.innerHTML = text;
 }
 
 for (let i of number) {
     i.addEventListener("click", function () {
+        calcule[pos] = result.innerHTML;
         calcule[pos] = i.innerHTML;
-
-        afficher(i.innerHTML)
-        console.log(calcule);
+        afficher(calcule[pos])
     })
 }
 
 for (let i of action) {
     i.addEventListener("click", function () {
+        i.style.animationName = "animCase";
+        i.style.animationDuration = "0.5s"
         if (i.innerHTML === "=") {
+            console.log(calcule)
             if (!isNaN(parseInt(calcule[calcule.length - 1]))) {
-                for (let j=0; j< calcule.length; j++) {
-                    if (calcule[j] === "+") {
-                        calc += parseInt(calcule[j-1]);
-                        calc += parseInt(calcule[j+1]);
-                        calcule = calcule.splice(j,1);
-                        console.log(calcule)
-                        calcule[0] = calc.toString();
-                        j = 0;
-                        console.log(calcule);
-                    }
-                    calc = 0;
+                for (let j = 0; j < calcule.length; j++) {
+                    formule += calcule[j];
                 }
+                calcule = [];
+                calcule[0] = eval(formule).toString();
+                pos = 0;
+                formule = "";
+                console.log(resultFinal);
+                console.log(calcule[0]);
+                resultFinal.innerHTML= calcule[0];
             }
         } else if (i.innerHTML === "+") {
-            if (calcule[pos] === 0) {
-                calcule[pos] = "0";
-            }
             if (!isNaN(parseInt(calcule[pos]))) {
                 pos++;
                 calcule[pos] = "+";
-                afficher("+")
+                afficher("+");
                 pos++;
             }
         } else if (i.innerHTML === "-") {
@@ -56,7 +55,7 @@ for (let i of action) {
         } else if (i.innerHTML === "x") {
             if (!isNaN(calcule[pos])) {
                 pos++;
-                calcule[pos] = "x";
+                calcule[pos] = "*";
                 afficher("x")
                 pos++;
             }
@@ -67,6 +66,11 @@ for (let i of action) {
                 afficher("%")
                 pos++;
             }
+        } else if (i.innerHTML === "reset"){
+            calcule[0] = 0;
+            pos = 0;
+            result.innerHTML = "";
+            resultFinal.innerHTML = ""
         }
     })
 }
